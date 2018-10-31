@@ -61,6 +61,12 @@
   when:
     - ansible_machine == "aarch64"
 
+# Upgrade ohpc-release if an Update has been released
+- name: Upgrade ohpc-release to the latest
+  yum:
+    name: 'ohpc-release'
+    state: latest
+
 # Disable firewall 
 #systemctl disable firewalld
 - name: Disable firewall
