@@ -127,11 +127,11 @@
     - inventory_hostname in groups[nt_cnodes]
     - enable_warewulf == false
 
-- name: Remove /tmp/munge.key on ansible local
-  local_action: file path=/tmp/munge.key state=absent
-  when:
-    - inventory_hostname in groups[nt_sms]
-    - enable_warewulf == false
+    #- name: Remove /tmp/munge.key on ansible local
+    #  local_action: file path=/tmp/munge.key state=absent
+    #  when:
+      #    - inventory_hostname in groups[nt_sms]
+      #    - enable_warewulf == false
 
 - name: Fix the file mode of /etc/munge/munge.key  on master
   file: path=/etc/munge/munge.key state=file mode=0400
