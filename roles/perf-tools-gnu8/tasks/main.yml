@@ -17,22 +17,25 @@
 # and ported by Linaro Ltd. and Fujitsu Ltd.
 
 #
-#roles/imb/tasks/main.yml
+#roles/perf-tools-gnu8/tasks/main.yml
 #
 
-- name: Install Intel MPI Bench on master
+# ---------------------------------------
+# Install Performance Tools (Section 4.4)
+# ---------------------------------------
+#yum -y groupinstall ohpc-perf-tools-gnu
+- name: Install Performance Tools on master and a development node
   yum: name={{ item }} state=latest
   with_items:
-    - imb-gnu8-openmpi-ohpc
-    - imb-gnu8-openmpi3-ohpc
-    - imb-gnu8-mpich-ohpc
-  when:
-    - inventory_hostname in groups[nt_sms]
+    - ohpc-gnu8-perf-tools
+  when: 
+    ( inventory_hostname in groups[ nt_devnodes ] ) or
+    ( ( inventory_hostname in groups[nt_cnodes] ) and ( enable_warewulf == false ) )
 
-- name: Install Intel MPI Bench for mvapich2 on master
-  yum: name={{ item }} state=latest
+- name: Install Performance Tools for a computing image on master
+  yum: name={{ item }} installroot="{{ compute_chroot_loc }}" state=latest
   with_items:
-    - imb-gnu8-mvapich2-ohpc
-  when:
+    - ohpc-gnu8-perf-tools
+  when: 
     - inventory_hostname in groups[nt_sms]
-    - ansible_machine == "x86_64"
+    - enable_warewulf == true

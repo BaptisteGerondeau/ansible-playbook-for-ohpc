@@ -17,22 +17,19 @@
 # and ported by Linaro Ltd. and Fujitsu Ltd.
 
 #
-#roles/imb/tasks/main.yml
+#roles/compiler-gnu8/tasks/main.yml
 #
 
-- name: Install Intel MPI Bench on master
-  yum: name={{ item }} state=latest
-  with_items:
-    - imb-gnu8-openmpi-ohpc
-    - imb-gnu8-openmpi3-ohpc
-    - imb-gnu8-mpich-ohpc
+#yum -y install gnu8-compilers-ohpc
+- name: Install gnu8-compilers-ohpc on master and a development node
+  yum: name=gnu8-compilers-ohpc state=latest
   when:
-    - inventory_hostname in groups[nt_sms]
+    ( inventory_hostname in groups[ nt_devnodes ] ) or
+    ( ( inventory_hostname in groups[nt_cnodes] ) and ( enable_warewulf == false ) )
 
-- name: Install Intel MPI Bench for mvapich2 on master
-  yum: name={{ item }} state=latest
-  with_items:
-    - imb-gnu8-mvapich2-ohpc
+- name: Install gnu8-compilers-ohpc for a computing image on master
+  yum: name=gnu8-compilers-ohpc installroot="{{ compute_chroot_loc }}" state=latest
   when:
     - inventory_hostname in groups[nt_sms]
-    - ansible_machine == "x86_64"
+    - enable_warewulf == true
+
