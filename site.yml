@@ -74,7 +74,7 @@
     - compiler-gnu8
     - compiler-llvm
     - compiler-intel
-    - openmpi-gnu8
+    - openmpi-gnu7
     - openmpi3-gnu8
     - mpich-gnu8
     - mvapich2-gnu8
