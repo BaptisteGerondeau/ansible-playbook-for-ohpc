@@ -24,6 +24,16 @@
 # We need to install some basic packages to compensate dependency problem caused by
 # combination of the package installation.
 #
+
+- name: Enable EPEL release
+  yum:
+    name: epel-release
+    state: latest
+  when:
+    ( inventory_hostname in groups[nt_sms] ) or
+    ( inventory_hostname in groups[nt_devnodes] ) or
+    ( ( inventory_hostname in groups[nt_cnodes] ) and ( enable_warewulf == false ) )
+
 - name: Install basic packages to perfrom OpenHPC installation
   yum: name={{ item }} state=latest
   with_items:
@@ -49,14 +59,16 @@
     - ansible_machine == "x86_64"
 
 - block:
+
   - name: Enable OpenHPC ARM Arch repository for local use
-    yum:
-      name: "{{ ohpc_release_rpm_arm }}"
-      state: present
-    when:  
-      ( inventory_hostname in groups[nt_sms] )  or
-      ( inventory_hostname in groups[nt_devnodes] ) or
-      ( ( inventory_hostname in groups[nt_cnodes] ) and ( enable_warewulf == false ) )
+    copy:
+      src: files/OpenHPC.repo
+      dest: /etc/yum.repos.d/OpenHPC.repo
+
+  - name: Copy GPG key
+    copy:
+      src: files/ohpc.gpgkey
+      dest: /etc/pki/rpm-gpg/RPM-GPG-KEY-OpenHPC-1
 
   when:
     - ansible_machine == "aarch64"

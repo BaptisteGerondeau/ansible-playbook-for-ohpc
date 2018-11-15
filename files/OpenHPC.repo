@@ -1,0 +1,11 @@
+[OpenHPC]
+name=OpenHPC-1.3.5 - Base
+baseurl=http://10.40.0.13/openhpc/1.3.5/CentOS_7
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-OpenHPC-1
+
+[OpenHPC-updates]
+name=OpenHPC-1.3.5 - Updates
+baseurl=http://10.40.0.13/openhpc/1.3.5/CentOS_7/updates
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-OpenHPC-1
