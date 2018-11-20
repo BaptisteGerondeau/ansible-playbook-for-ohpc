@@ -29,7 +29,7 @@
   - name: Install InfiniBand support on master
     yum: name={{ item }} state=latest
     with_items:
-      - "@InfiniBand Support"
+      - "@Infiniband Support"
     when:
       - inventory_hostname in groups[nt_sms]
 
@@ -134,6 +134,31 @@
         src: "/etc/sysconfig/network-scripts/ifcfg-{{ sms_ipoib_internal }}"
         dest: "{{ role_path }}/ifcfg-ib"
         flat: yes
+
+  when:
+    - inventory_hostname in groups[nt_sms]
+    - enable_dhcpd_server == false      
+    - enable_ipoib == true
+    - enable_ifup == true
+#fi
+- block:
+
+  - name: Install InfiniBand support on cnodes
+    yum: name={{ item }} state=latest
+    with_items:
+      - "@Infiniband Support"
+
+  - name: Create an ifcfg-ib file on master
+    copy:
+      src: "{{ role_path }}/ifcfg-ib"
+      dest: "/etc/sysconfig/network-scripts/ifcfg-{{ cnodes_ipoib_internal }}" 
+
+#     perl -pi -e "s/master_ipoib/${sms_ipoib}/" /etc/sysconfig/network-scripts/ifcfg-ib0
+  - name: Define local IPoIB address on cnode
+    replace: dest="/etc/sysconfig/network-scripts/ifcfg-{{ cnodes_ipoib_internal }}" regexp='^DEVICE=(\S+)' replace="DEVICE={{ cnodes_ipoib_internal }}" 
+    with_items: "{{ compute_ipoib }}"
+    when:
+      - enable_dhcpd_server == false      
 
   when:
     - inventory_hostname in groups[nt_sms]
